@@ -12,12 +12,12 @@ username_field = compat.get_username_field()
 
 class ForumInlineAdmin(admin.TabularInline):
     model = Forum
-    fields = ['name', 'hidden', 'position']
+    fields = ['name', 'hidden', 'position', 'group']
     extra = 0
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'position', 'hidden', 'forum_count']
+    list_display = ['name', 'position', 'hidden', 'forum_count', 'group']
     list_per_page = 20
     ordering = ['position']
     search_fields = ['name']
@@ -27,7 +27,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class ForumAdmin(admin.ModelAdmin):
-    list_display = ['name', 'category', 'hidden', 'position', 'topic_count', ]
+    list_display = ['name', 'category', 'hidden', 'position', 'topic_count', 'group']
     list_per_page = 20
     raw_id_fields = ['moderators']
     ordering = ['-category']
@@ -35,7 +35,7 @@ class ForumAdmin(admin.ModelAdmin):
     list_editable = ['position', 'hidden']
     fieldsets = (
         (None, {
-                'fields': ('category', 'parent', 'name', 'hidden', 'position', )
+                'fields': ('category', 'parent', 'name', 'hidden', 'position', 'group')
                 }
          ),
         (_('Additional options'), {
@@ -53,7 +53,7 @@ class PollAnswerAdmin(admin.TabularInline):
 
 
 class TopicAdmin(admin.ModelAdmin):
-    list_display = ['name', 'forum', 'created', 'head', 'post_count', 'poll_type',]
+    list_display = ['name', 'forum', 'created', 'head', 'post_count', 'poll_type', 'group']
     list_per_page = 20
     raw_id_fields = ['user', 'subscribers']
     ordering = ['-created']
@@ -61,7 +61,7 @@ class TopicAdmin(admin.ModelAdmin):
     search_fields = ['name']
     fieldsets = (
         (None, {
-                'fields': ('forum', 'name', 'user', ('created', 'updated'), 'poll_type',)
+                'fields': ('forum', 'name', 'user', ('created', 'updated'), 'poll_type', 'group')
                 }
          ),
         (_('Additional options'), {
