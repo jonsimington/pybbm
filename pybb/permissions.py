@@ -7,9 +7,25 @@ from __future__ import unicode_literals
 from django.db.models import Q
 
 from pybb import defaults, util
-from pybb.models import Topic, PollAnswerUser
+from pybb.models import Topic, PollAnswerUser, Forum, Category
 
-
+# Returns a list of groups that the user passed is allowed
+# to view
+def get_viewable_groups(user):
+    if user.is_authenticated():
+        user_group = user.groups.all()[0].name
+    else:
+        return ['Applicant']
+    
+    if user_group == 'Reject':
+        return ['Applicant']
+    elif user_group == 'Applicant':
+        return ['Applicant']
+    elif user_group == 'Member':
+        return ['Member', 'Applicant']
+    elif user_group == 'Officer':
+        return ['Officer', 'Member', 'Applicant']
+    
 class DefaultPermissionHandler(object):
     """ 
     Default Permission handler. If you want to implement custom permissions (for example,
@@ -26,23 +42,32 @@ class DefaultPermissionHandler(object):
     # permission checks on categories
     #
     def filter_categories(self, user, qs):
-        """ return a queryset with categories `user` is allowed to see """
-        return qs.filter(hidden=False) if not user.is_staff else qs
-
+        viewable_groups = get_viewable_groups(user)
+        return Category.objects.filter(group__in=viewable_groups)
+    
     def may_view_category(self, user, category):
         """ return True if `user` may view this category, False if not """
-        return user.is_staff or not category.hidden
+        viewable_groups = get_viewable_groups(user)
+        if category.group in viewable_groups:
+            return True
+        else:
+            return False
 
     # 
     # permission checks on forums
     # 
     def filter_forums(self, user, qs):
         """ return a queryset with forums `user` is allowed to see """
-        return qs.filter(Q(hidden=False) & Q(category__hidden=False)) if not user.is_staff else qs
+        viewable_groups = get_viewable_groups(user)
+        return Forum.objects.filter(group__in=viewable_groups)
 
     def may_view_forum(self, user, forum):
         """ return True if user may view this forum, False if not """
-        return user.is_staff or ( forum.hidden == False and forum.category.hidden == False )
+        viewable_groups = get_viewable_groups(user)
+        if forum.group in viewable_groups:
+            return True
+        else:
+            return False
 
     def may_create_topic(self, user, forum):
         """ return True if `user` is allowed to create a new topic in `forum` """
@@ -53,24 +78,16 @@ class DefaultPermissionHandler(object):
     # 
     def filter_topics(self, user, qs):
         """ return a queryset with topics `user` is allowed to see """
-        if not user.is_staff:
-            qs = qs.filter(Q(forum__hidden=False) & Q(forum__category__hidden=False))
-        if not user.is_superuser:
-            if user.is_authenticated():
-                qs = qs.filter(Q(forum__moderators=user) | Q(user=user) | Q(on_moderation=False)).distinct()
-            else:
-                qs = qs.filter(on_moderation=False)
-        return qs
+        viewable_groups = get_viewable_groups(user)
+        return Topic.objects.filter(group__in=viewable_groups)
 
     def may_view_topic(self, user, topic):
         """ return True if user may view this topic, False otherwise """
-        if user.is_superuser:
+        viewable_groups = get_viewable_groups(user)
+        if topic.group in viewable_groups:
             return True
-        if not user.is_staff and (topic.forum.hidden or topic.forum.category.hidden):
-            return False  # only staff may see hidden forum / category
-        if topic.on_moderation:
-            return user.is_authenticated() and (user == topic.user or user in topic.forum.moderators)
-        return True
+        else:
+            return False
 
     def may_moderate_topic(self, user, topic):
         return user.is_superuser or user in topic.forum.moderators.all()
