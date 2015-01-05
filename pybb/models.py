@@ -31,7 +31,9 @@ class Category(models.Model):
     position = models.IntegerField(_('Position'), blank=True, default=0)
     hidden = models.BooleanField(_('Hidden'), blank=False, null=False, default=False,
                                  help_text=_('If checked, this category will be visible only for staff'))
-
+    group = models.CharField(_('Group'), max_length=20,
+                             help_text='Provide the lowest user-group allowed to view this Category.')
+    
     class Meta(object):
         ordering = ['position']
         verbose_name = _('Category')
@@ -71,6 +73,9 @@ class Forum(models.Model):
     readed_by = models.ManyToManyField(get_user_model_path(), through='ForumReadTracker', related_name='readed_forums')
     headline = models.TextField(_('Headline'), blank=True, null=True)
 
+    group = models.CharField(_('Group'), max_length=20,
+                            help_text='Provide the lowest user-group allowed to view this Forum.')
+    
     class Meta(object):
         ordering = ['position']
         verbose_name = _('Forum')
@@ -144,7 +149,9 @@ class Topic(models.Model):
     on_moderation = models.BooleanField(_('On moderation'), default=False)
     poll_type = models.IntegerField(_('Poll type'), choices=POLL_TYPE_CHOICES, default=POLL_TYPE_NONE)
     poll_question = models.TextField(_('Poll question'), blank=True, null=True)
-
+    group = models.CharField(_('Group'), max_length=20,
+                            help_text='Provide the lowest user-group allowed to view this Topic.')
+    
     class Meta(object):
         ordering = ['-created']
         verbose_name = _('Topic')
