@@ -251,6 +251,9 @@ class Post(RenderableItem):
     user_ip = models.IPAddressField(_('User IP'), blank=True, default='0.0.0.0')
     on_moderation = models.BooleanField(_('On moderation'), default=False)
 
+    group = models.CharField(_('Group'), max_length=20, default='Applicant',
+                             help_text='Provide the lowest user-group allowed to view this Post.')
+
     class Meta(object):
         ordering = ['created']
         verbose_name = _('Post')

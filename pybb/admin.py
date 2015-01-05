@@ -81,7 +81,7 @@ class ForumReadTrackerAdmin(admin.ModelAdmin):
     search_fields = ['user__%s' % username_field]
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ['topic', 'user', 'created', 'updated', 'summary']
+    list_display = ['topic', 'user', 'created', 'updated', 'summary', 'group']
     list_per_page = 20
     raw_id_fields = ['user', 'topic']
     ordering = ['-created']
@@ -89,7 +89,7 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ['body']
     fieldsets = (
         (None, {
-                'fields': ('topic', 'user')
+                'fields': ('topic', 'user', 'group')
                 }
          ),
         (_('Additional options'), {

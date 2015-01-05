@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 from django.db.models import Q
 
 from pybb import defaults, util
-from pybb.models import Topic, PollAnswerUser, Forum, Category
+from pybb.models import Topic, PollAnswerUser
 
 # Returns a list of groups that the user passed is allowed
 # to view
@@ -138,31 +138,17 @@ class DefaultPermissionHandler(object):
     #    
     def filter_posts(self, user, qs):
         """ return a queryset with posts `user` is allowed to see """
-
-        # first filter by topic availability
-        if not user.is_staff:
-            qs = qs.filter(Q(topic__forum__hidden=False) & Q(topic__forum__category__hidden=False))
-
-        if not defaults.PYBB_PREMODERATION or user.is_superuser:
-            # superuser may see all posts, also if premoderation is turned off moderation 
-            # flag is ignored
-            return qs
-        elif user.is_authenticated():
-            # post is visible if user is author, post is not on moderation, or user is moderator
-            # for this forum
-            qs = qs.filter(Q(user=user) | Q(on_moderation=False) | Q(topic__forum__moderators=user))
-        else:
-            # anonymous user may not see posts which are on moderation
-            qs = qs.filter(on_moderation=False)
-        return qs
+        viewable_groups = get_viewable_groups(user)
+        return qs.filter(group__in=viewable_groups)
+        
 
     def may_view_post(self, user, post):
         """ return True if `user` may view `post`, False otherwise """
-        if user.is_superuser:
+        viewable_groups = get_viewable_groups(user)
+        if post.group in viewable_groups:
             return True
-        if post.on_moderation:
-            return post.user == user or user in post.topic.forum.moderators.all()
-        return True
+        else:
+            return False
 
     def may_edit_post(self, user, post):
         """ return True if `user` may edit `post` """
