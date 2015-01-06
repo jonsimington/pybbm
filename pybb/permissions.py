@@ -45,7 +45,7 @@ class DefaultPermissionHandler(object):
         viewable_groups = get_viewable_groups(user)
         try:
             return qs.filter(group__in=viewable_groups)
-        except:
+        except ValueError:
             return qs
         
     def may_view_category(self, user, category):
@@ -62,8 +62,11 @@ class DefaultPermissionHandler(object):
     def filter_forums(self, user, qs):
         """ return a queryset with forums `user` is allowed to see """
         viewable_groups = get_viewable_groups(user)
-        return qs.filter(group__in=viewable_groups)
-
+        try:
+            return qs.filter(group__in=viewable_groups)
+        except ValueError:
+            return qs
+        
     def may_view_forum(self, user, forum):
         """ return True if user may view this forum, False if not """
         viewable_groups = get_viewable_groups(user)
@@ -84,7 +87,7 @@ class DefaultPermissionHandler(object):
         viewable_groups = get_viewable_groups(user)
         try:
             return qs.filter(group__in=viewable_groups)
-        except:
+        except ValueError:
             return qs
         
     def may_view_topic(self, user, topic):
@@ -147,7 +150,7 @@ class DefaultPermissionHandler(object):
         viewable_groups = get_viewable_groups(user)
         try:
             return qs.filter(group__in=viewable_groups)
-        except:
+        except ValueError:
             return qs
 
     def may_view_post(self, user, post):
