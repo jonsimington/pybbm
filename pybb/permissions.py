@@ -21,6 +21,8 @@ def get_viewable_groups(user):
         return ['Applicant']
     elif user_group == 'Applicant':
         return ['Applicant']
+    elif user_group == 'Trial':
+        return ['Member', 'Applicant']
     elif user_group == 'Member':
         return ['Member', 'Applicant']
     elif user_group == 'Officer':
