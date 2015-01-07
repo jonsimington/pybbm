@@ -82,9 +82,9 @@ class PybbTimeNode(template.Node):
             tz = tz1 + util.get_pybb_profile(context['user']).time_zone * 60 * 60
             context_time = context_time + timedelta(seconds=tz)
         if today < context_time < tomorrow:
-            return _('today, %s') % context_time.strftime('%H:%M')
+            return _('today, %s') % context_time.strftime('%H:%M %p')
         elif yesterday < context_time < today:
-            return _('yesterday, %s') % context_time.strftime('%H:%M')
+            return _('yesterday, %s') % context_time.strftime('%H:%M %p')
         else:
             return dateformat.format(context_time, 'd M, Y H:i')
 
