@@ -74,6 +74,9 @@ class DefaultPermissionHandler(object):
         
     def may_view_forum(self, user, forum):
         """ return True if user may view this forum, False if not """
+        if not user.is_authenticated:
+            if forum.group != "Applicant":
+                                return False
         viewable_groups = get_viewable_groups(user)
         if forum.group in viewable_groups:
             return True
@@ -97,6 +100,9 @@ class DefaultPermissionHandler(object):
         
     def may_view_topic(self, user, topic):
         """ return True if user may view this topic, False otherwise """
+        if not user.is_authenticated:
+            if topic.group != "Applicant":
+                return False
         viewable_groups = get_viewable_groups(user)
         if topic.group in viewable_groups:
             return True
@@ -160,6 +166,9 @@ class DefaultPermissionHandler(object):
 
     def may_view_post(self, user, post):
         """ return True if `user` may view `post`, False otherwise """
+        if not user.is_authenticated:
+            if post.group != "Applicant":
+                return False
         viewable_groups = get_viewable_groups(user)
         if post.group in viewable_groups:
             return True
