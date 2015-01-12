@@ -52,6 +52,9 @@ class DefaultPermissionHandler(object):
         
     def may_view_category(self, user, category):
         """ return True if `user` may view this category, False if not """
+        if not user.is_authenticated:
+            if category.group != "Applicant":
+                return False
         viewable_groups = get_viewable_groups(user)
         if category.group in viewable_groups:
             return True
