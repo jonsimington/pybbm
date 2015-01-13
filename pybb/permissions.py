@@ -76,8 +76,6 @@ class DefaultPermissionHandler(object):
         if not user.is_authenticated():
             if not forum.group == 'Applicant':
                 return False
-            else:
-                return True
         viewable_groups = get_viewable_groups(user)
         if forum.group in viewable_groups:
             return True
