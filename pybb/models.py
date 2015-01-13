@@ -126,7 +126,7 @@ class Forum(models.Model):
 
 @receiver(pre_save, sender=Forum)
 def forum_pre_save(sender, instance, **kwargs):
-    instance.group = category.group
+    instance.group = instance.category.group
 
 @python_2_unicode_compatible
 class Topic(models.Model):
@@ -229,7 +229,7 @@ class Topic(models.Model):
 
 @receiver(pre_save, sender=Topic)
 def topic_pre_save(sender, instance, **kwargs):
-    instance.group = forum.group
+    instance.group = instance.forum.group
 
 class RenderableItem(models.Model):
     """
@@ -326,7 +326,7 @@ class Post(RenderableItem):
 
 @receiver(pre_save, sender=Post)
 def post_pre_save(sender, instance, **kwargs):
-    instance.group = topic.group
+    instance.group = instance.topic.group
     
 class Profile(PybbProfile):
     """
