@@ -74,7 +74,10 @@ class DefaultPermissionHandler(object):
     def may_view_forum(self, user, forum):
         """ return True if user may view this forum, False if not """
         if not user.is_authenticated():
-            return False
+            if not forum.group == 'Applicant':
+                return False
+            else:
+                return True
         viewable_groups = get_viewable_groups(user)
         if forum.group in viewable_groups:
             return True
