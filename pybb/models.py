@@ -121,9 +121,6 @@ class Forum(models.Model):
             parent = parent.parent
         return parents
 
-@receiver(pre_save, sender=Forum)
-def forum_pre_save(sender, instance, **kwargs):
-    instance.group = category.group
 
 @python_2_unicode_compatible
 class Topic(models.Model):
@@ -224,9 +221,6 @@ class Topic(models.Model):
         else:
             return None
 
-@receiver(pre_save, sender=Topic)
-def topic_pre_save(sender, instance, **kwargs):
-    instance.group = forum.group
 
 class RenderableItem(models.Model):
     """
@@ -321,10 +315,7 @@ class Post(RenderableItem):
         """
         return self.topic.forum.category, self.topic.forum, self.topic,
 
-@receiver(pre_save, sender=Post)
-def post_pre_save(sender, instance, **kwargs):
-    instance.group = topic.group
-    
+
 class Profile(PybbProfile):
     """
     Profile class that can be used if you doesn't have
