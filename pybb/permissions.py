@@ -17,7 +17,7 @@ def get_viewable_groups(user):
     else:
         return ['Applicant']
     
-    if user_group == 'Reject':
+    if user_group == 'Declined':
         return ['Applicant']
     elif user_group == 'Applicant':
         return ['Applicant']
