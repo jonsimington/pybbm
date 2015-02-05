@@ -18,7 +18,6 @@ from django.views.decorators.http import require_POST
 from django.views.generic.edit import ModelFormMixin
 from django.views.decorators.csrf import csrf_protect
 from django.views import generic
-from django.views.generic.edit import UpdateView
 from pybb import compat, defaults, util
 from pybb.forms import PostForm, AdminPostForm, AttachmentFormSet, PollAnswerFormSet, PollForm
 from pybb.models import Category, Forum, Topic, Post, TopicReadTracker, ForumReadTracker, PollAnswerUser
@@ -735,27 +734,3 @@ def unblock_user(request, username):
     msg = _('User successfuly unblocked')
     messages.success(request, msg, fail_silently=True)
     return redirect('pybb:index')
-
-class MarkAllReadView(UpdateView):
-    @method_decorator(user_passes_test(user.is_authenticated, login_url="/application/access-denied/"))
-    def dispatch(self, *args, **kwargs):
-        return super(MarkAllReadView, self).dispatch(*args, **kwargs)
-
-    def get(self, request, **kwargs):
-        list_type = kwargs.pop('type')
-        list_name = kwargs.pop('name')
-        
-        if list_type == 'forum':
-            forum = Forum.objects.get(name=list_name)
-
-            for topic in forum.topics:
-                topic.unread = False
-                topic.save()
-            
-        elif list_type == 'topic':
-            topic = Topic.objects.get(name=list_name)
-
-            topic.unread = False
-            topic.save()
-        else:
-            
