@@ -70,7 +70,7 @@ urlpatterns += patterns('pybb.views',
 
                         # Commands
                         url('^mark_all_as_read/$', 'mark_all_as_read', name='mark_all_as_read')
-                        )
+                        ),
 
                         # Mark All Read
                         url(r'^forums/mark-all-read/(?P<type>[\w-]+)/(?P<name>[\w-]+)/',
