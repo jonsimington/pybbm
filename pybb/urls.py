@@ -11,7 +11,7 @@ from pybb.views import IndexView, CategoryView, ForumView, TopicView,\
     AddPostView, EditPostView, UserView, PostView, ProfileEditView,\
     DeletePostView, StickTopicView, UnstickTopicView, CloseTopicView,\
     OpenTopicView, ModeratePost, TopicPollVoteView, LatestTopicsView,\
-    UserTopics, UserPosts, topic_cancel_poll_vote
+    UserTopics, UserPosts, topic_cancel_poll_vote, MarkAllReadView
 
 
 urlpatterns = patterns('',
@@ -71,3 +71,9 @@ urlpatterns += patterns('pybb.views',
                         # Commands
                         url('^mark_all_as_read/$', 'mark_all_as_read', name='mark_all_as_read')
                         )
+
+                        # Mark All Read
+                        url(r'^forums/mark-all-read/(?P<type>[\w-]+)/(?P<name>[\w-]+)/',
+                            MarkAllReadView.as_view(),
+                            name='mark_all_read'),
+
